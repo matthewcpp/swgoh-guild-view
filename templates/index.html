@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guild View</title>
+    <link rel="stylesheet" href="/static/stylesheet.css">
+</head>
+<body>
+    <table>
+        <thead>
+        <tr>
+        <th>Character</th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        <th>
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+            <img src='http://swgoh.gg/static/img/star.png' />
+        </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key in guild_info %}
+            <tr>
+            <td>
+                {{ guild_info[key]["name"].decode('utf-8') }}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][1] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][2] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][3] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][4] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][5] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][6] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+            <td>
+                {% for player in guild_info[key]["star_counts"][7] %}
+                <div>{{ player.decode('utf-8') }}</div>
+                {% endfor %}
+            </td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
