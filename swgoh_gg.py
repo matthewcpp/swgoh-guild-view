@@ -39,7 +39,9 @@ def get_member_info(member_name, member_url, guild_info):
                 guild_info[name] = create_charinfo(name, img_url)
 
             char_info = guild_info[name]
-            char_info["star_counts"][star_count].append(member_name)
+
+            gear_lvl = char.find("div", class_="char-portrait-full-gear-level").string
+            char_info["star_counts"][star_count].append("{0} ({1})".format(member_name, gear_lvl))
 
 
 
