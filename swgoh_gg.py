@@ -47,7 +47,7 @@ def get_guild_info(guild_url):
     if r.status_code == 200:
         soup = BeautifulSoup(r.text, "html.parser")
 
-        for member_info in soup.find("tbody").find_all("a"):
+        for member_info in soup.find("tbody").find_all("a")[:15]:
             member_name = member_info.strong.string.encode('utf-8')
             member_url = u"{0}{1}collection".format(SWGOH_GG, member_info["href"])
 
