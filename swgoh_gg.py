@@ -29,13 +29,18 @@ def get_member_info(member_name, member_url, guild_info):
     for char in char_list:
         name = char.find("div", class_="collection-char-name").string.encode('utf-8')
         img_url = char.find("img")["src"]
-        star_count = 7 - len(char.find_all("div", class_="star-inactive"))
 
-        if name not in guild_info:
-            guild_info[name] = create_charinfo(name, img_url)
+        has_character = len(char.find_all("div", class_="star")) > 0
 
-        char_info = guild_info[name]
-        char_info["star_counts"][star_count].append(member_name)
+        if has_character:
+
+            star_count = 7 - len(char.find_all("div", class_="star-inactive"))
+
+            if name not in guild_info:
+                guild_info[name] = create_charinfo(name, img_url)
+
+            char_info = guild_info[name]
+            char_info["star_counts"][star_count].append(member_name)
 
 
 
