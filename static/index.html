@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GuildView</title>
+
+    <script type="text/javascript" src="/static/js/main.js"></script>
+    <script type="text/javascript" src="/static/js/tmpl.js"></script>
+
+    <link rel="stylesheet" href="/static/css/main.css" type="text/css" />
+
+    <script>
+        window.onload = function () {
+            get_data();
+        }
+    </script>
+
+    <script type="text/x-tmpl" id="character_data_template">
+    {% for (var key in o) { %}
+        <tr>
+        <td>{%=o[key].name%}</td>
+        {% for (var i=1; i<=7; i++) { %}
+        <td>
+            {% for (var j=1; j<=o[key].star_counts[i].length; j++) { %}
+            <div>{%=o[key].star_counts[i][j]%}<div>
+            {% } %}
+        </td>
+        {% } %}
+        </tr>
+    {% } %}
+
+    </script>
+</head>
+<body>
+<div id="content">
+    <img id="loading_image" src="/static/img/loading.gif" />
+    <table id="character_table" style='display:none;'>
+            <thead>
+            <tr>
+            <th>Character</th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            <th>
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+                <img src='http://swgoh.gg/static/img/star.png' />
+            </th>
+            </tr>
+            </thead>
+        <tbody id="character_data"></tbody>
+    </table>
+</div>
+</body>
+</html>
