@@ -33,7 +33,6 @@ def get_member_info(member_name, member_url, guild_info):
         has_character = len(char.find_all("div", class_="star")) > 0
 
         if has_character:
-
             star_count = 7 - len(char.find_all("div", class_="star-inactive"))
 
             if name not in guild_info:
@@ -57,7 +56,6 @@ def get_guild_info(guild_url):
             member_url = u"{0}{1}collection".format(SWGOH_GG, member_info["href"])
 
             get_member_info(member_name, member_url, guild_info)
-
     else:
         raise Exception("HTTP Error")
 
