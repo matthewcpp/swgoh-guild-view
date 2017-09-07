@@ -21,3 +21,13 @@ td,th{
     /* bring your own prefixes */
     transform: translate(-50%, -50%);
 }
+
+#guild_name_callout{
+    font-size: 24px;
+    text-align: center;
+}
+
+#guild_progress{
+   font-size: 16px;
+    text-align: center;
+}

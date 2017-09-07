@@ -45,7 +45,7 @@ def get_member_info(member_name, member_url, guild_info):
 
 
 
-def get_guild_info(guild_url):
+def get_guild_info(guild_url, progress):
     guild_info = dict()
 
     r = requests.get(guild_url)
@@ -53,11 +53,19 @@ def get_guild_info(guild_url):
     if r.status_code == 200:
         soup = BeautifulSoup(r.text, "html.parser")
 
-        for member_info in soup.find("tbody").find_all("a"):
+        members = soup.find("tbody").find_all("a")
+        p = progress.get(guild_url)
+        p["progress"]["total"] = len(members)
+        progress.set(guild_url, p)
+
+        for member_info in members:
             member_name = member_info.strong.string.encode('utf-8')
             member_url = u"{0}{1}collection".format(SWGOH_GG, member_info["href"])
 
             get_member_info(member_name, member_url, guild_info)
+
+            p["progress"]["processed"] += 1
+            progress.set(guild_url, p)
     else:
         raise Exception("HTTP Error")
 
