@@ -17,10 +17,14 @@ def get_guild_info(guild_url):
 
     cache.set(guild_url, guild_data, timeout=5 * 3600)
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
 @app.route('/view_guild')
 @app.route('/view_guild/')
-def homepage():
-    return app.send_static_file('index.html')
+def view_guild():
+    return app.send_static_file('view_guild.html')
 
 @app.route('/guild_data')
 def guild_data():

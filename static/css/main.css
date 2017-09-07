@@ -14,13 +14,6 @@ td,th{
     position: relative;
 }
 
-#loading_image{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    /* bring your own prefixes */
-    transform: translate(-50%, -50%);
-}
 
 #guild_name_callout{
     font-size: 24px;

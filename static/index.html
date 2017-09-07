@@ -2,103 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GuildView</title>
+    <title>Guild Viewer</title>
 
-    <script type="text/javascript" src="/static/js/main.js"></script>
-    <script type="text/javascript" src="/static/js/tmpl.js"></script>
-
-    <link rel="stylesheet" href="/static/css/main.css" type="text/css" />
+    <link rel="stylesheet" href="/static/css/index.css" type="text/css" />
+    <link rel="stylesheet" href="/static/css/common.css" type="text/css" />
 
     <script>
         window.onload = function () {
-            var guild_name = getParameterByName("guild_name");
-            var guild_id = getParameterByName("guild_id");
+            var view_guild_button = document.getElementById("view_guild_button");
+            var guild_id_box = document.getElementById("guild_id_box");
+            var guild_name_box = document.getElementById("guild_name_box");
 
-
-            if (guild_name){
-                document.getElementById("guild_name_callout").innerHTML = guild_name;
-                get_data(guild_name, guild_id);
+            view_guild_button.onclick = function(){
+                window.location = "view_guild/?guild_id="+guild_id_box.value+"&guild_name="+guild_name_box.value;
             }
         }
     </script>
 
-    <script type="text/x-tmpl" id="character_data_template">
-    {% for (var key in o) { %}
-        <tr>
-        <td>
-            <div><img src="{%=o[key].img_url %}" /></div>
-            <div>{%=o[key].name %}</div>
-        </td>
-        {% for (var i=1; i<=7; i++) { %}
-        <td>
-            {% for (var j=0; j<=o[key].star_counts[i].length; j++) { %}
-            <div>{%=o[key].star_counts[i][j] %}<div>
-            {% } %}
-        </td>
-        {% } %}
-        </tr>
-    {% } %}
-
-    </script>
 </head>
 <body>
-<div id="content">
-    <div id="loading_image">
-        <div id="guild_name_callout"></div>
-        <div><img src="/static/img/loading.gif" /></div>
-        <div id="guild_progress"></div>
+<div>
+    <div id="url_box" class="centered url_box_text">
+        <div class="center_text">
+            Your Guild at a Glance:
+        </div>
+        <div>
+            http://swgoh.gg/g/<input id="guild_id_box" type="text" value="5481" class="url_box_text">/<input id="guild_name_box" type="text" value="scruffy-nerfed-herders" class="url_box_text">/
+        </div>
+        <div class="center_text">
+            <button id="view_guild_button" class="url_box_text">View</button>
+        </div>
     </div>
 
-    <table id="character_table" style='display:none;'>
-            <thead>
-            <tr>
-            <th>Character</th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            <th>
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-                <img src='http://swgoh.gg/static/img/star.png' />
-            </th>
-            </tr>
-            </thead>
-        <tbody id="character_data"></tbody>
-    </table>
 </div>
+
 </body>
 </html>
