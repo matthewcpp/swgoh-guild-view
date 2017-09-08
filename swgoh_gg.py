@@ -5,10 +5,11 @@ import json
 SWGOH_GG = u"http://swgoh.gg"
 
 
-def create_charinfo(name, img_url):
+def create_charinfo(name, img_url, light_side):
     char_info = dict()
     char_info["name"] = name
     char_info["img_url"] = img_url;
+    char_info["force_side"] = "light" if light_side else "dark"
 
     star_counts = dict()
     for i in xrange(1, 8):
@@ -30,13 +31,16 @@ def get_member_info(member_name, member_url, guild_info):
         name = char.find("div", class_="collection-char-name").string.encode('utf-8')
         img_url = char.find("img")["src"]
 
+        classes = char.get('class', [])
+        light_side = True if "collection-char-light-side" in classes else False
+
         has_character = len(char.find_all("div", class_="star")) > 0
 
         if has_character:
             star_count = 7 - len(char.find_all("div", class_="star-inactive"))
 
             if name not in guild_info:
-                guild_info[name] = create_charinfo(name, img_url)
+                guild_info[name] = create_charinfo(name, img_url, light_side)
 
             char_info = guild_info[name]
 
