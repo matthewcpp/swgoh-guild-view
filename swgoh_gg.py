@@ -62,14 +62,21 @@ def get_guild_info(guild_url, progress):
         p["progress"]["total"] = len(members)
         progress.set(guild_url, p)
 
+        processed_members = set()
+
         for member_info in members:
             member_name = member_info.strong.string.encode('utf-8')
             member_url = u"{0}{1}collection".format(SWGOH_GG, member_info["href"])
 
-            get_member_info(member_name, member_url, guild_info)
+            if member_name not in processed_members:
+                get_member_info(member_name, member_url, guild_info)
 
-            p["progress"]["processed"] += 1
-            progress.set(guild_url, p)
+                p["progress"]["processed"] += 1
+                progress.set(guild_url, p)
+
+                processed_members.add(member_name)
+            else:
+                print "Skipping duplicate member: {0}".format(member_name)
     else:
         raise Exception("HTTP Error")
 
