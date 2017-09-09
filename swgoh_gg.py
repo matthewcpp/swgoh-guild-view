@@ -81,12 +81,3 @@ def get_guild_info(guild_url, progress):
         raise Exception("HTTP Error")
 
     return guild_info
-
-
-if __name__ == "__main__":
-    guild_url = "http://swgoh.gg/g/5481/scruffy-nerfed-herders/"
-
-    info = get_guild_info(guild_url)
-
-    f = open("C:/temp/guild_info.json", "w")
-    f.write(json.dumps(info))

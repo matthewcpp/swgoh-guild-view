@@ -1,3 +1,7 @@
+var QueuedPollTime = 10 * 1000;
+var ProcessingPollTime = 2 * 1000;
+var prev_progress = 0;
+
 function get_data(guild_name, guild_id){
     var xmlhttp = new XMLHttpRequest();
 
@@ -7,27 +11,44 @@ function get_data(guild_name, guild_id){
     xmlhttp.onload = function () {
         var result = JSON.parse(xmlhttp.responseText);
 
-        if (result.status === "processing"){
-            update_progress(result.progress, guild_name, guild_id);
-        }
-        else{
-            var loading_image = document.getElementById("loading_image");
-            loading_image.parentNode.removeChild(loading_image);
+        switch (result.status){
+            case "complete":
+                load_complete(result.data);
+                break;
 
-            document.getElementById("guild_data").style.display = "block";
-            document.getElementById("filter_controls").style.display = "block";
+            case "processing":
+                update_progress(result.progress, guild_name, guild_id);
+                break;
 
-            document.getElementById("character_data").innerHTML = tmpl("character_data_template", result.data);
-
-            prepare_character_filter(result.data);
-            init_events();
+            case "queued":
+                update_queued(guild_name, guild_id);
         }
     };
 
     xmlhttp.send();
 }
 
-var prev_progress = 0;
+function load_complete(data){
+        var loading_image = document.getElementById("loading_image");
+        loading_image.parentNode.removeChild(loading_image);
+
+        document.getElementById("guild_data").style.display = "block";
+        document.getElementById("filter_controls").style.display = "block";
+
+        document.getElementById("character_data").innerHTML = tmpl("character_data_template", data);
+
+        prepare_character_filter(data);
+        init_events();
+}
+
+function update_queued(guild_name, guild_id){
+    var guild_progress = document.getElementById("guild_progress");
+        guild_progress.innerHTML = "The system is currently processing data for other guilds.  We will get to you as soon as possible.";
+
+    setTimeout(function() {
+        get_data(guild_name, guild_id);
+    }, QueuedPollTime);
+}
 
 function update_progress(progress, guild_name, guild_id){
     if (progress.processed > prev_progress){
@@ -39,17 +60,7 @@ function update_progress(progress, guild_name, guild_id){
 
     setTimeout(function() {
         get_data(guild_name, guild_id);
-    }, 1000);
-}
-
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }, ProcessingPollTime);
 }
 
 function set_col_visibility(col_num, visibility){
@@ -148,4 +159,15 @@ function prepare_character_filter(data){
 
 function replace_all(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
+}
+
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
