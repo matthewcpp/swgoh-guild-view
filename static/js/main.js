@@ -19,6 +19,7 @@ function get_data(guild_name, guild_id){
 
             document.getElementById("character_data").innerHTML = tmpl("character_data_template", result.data);
 
+            prepare_character_filter(result.data);
             init_events();
         }
     };
@@ -80,4 +81,65 @@ function init_events(){
         })
     }
 
+    var character_filter = document.getElementById("character_filter");
+    character_filter.addEventListener("change",  function(){
+        filter_character(character_filter.value);
+    });
+
+}
+
+function filter_character(character_name){
+    if (character_name ==="all"){
+        var items = document.getElementsByClassName("character");
+        for (var i  = 0; i < items.length; i++) {
+            items[i].style.display = "table-row";
+        }
+
+        var light_side_filter = document.getElementById("light_side_filter");
+        var dark_side_filter = document.getElementById("dark_side_filter");
+
+        if (!light_side_filter.checked)
+            set_force_visibility(light_side_filter.getAttribute("data-force-side"), false);
+
+        if (!dark_side_filter.checked)
+            set_force_visibility(dark_side_filter.getAttribute("data-force-side"), false);
+
+            items = document.getElementsByClassName("force_side_checkbox");
+        for (var i  = 0; i < items.length; i++) {
+            items[i].disabled = false;
+        }
+    }
+    else{
+        var items = document.getElementsByClassName("character");
+        for (var i  = 0; i < items.length; i++) {
+            items[i].style.display = "none";
+        }
+
+        items = document.getElementsByClassName("force_side_checkbox");
+        for (var i  = 0; i < items.length; i++) {
+            items[i].disabled = true;
+        }
+
+        document.getElementById(character_name).style.display = "table-row";
+    }
+}
+
+
+
+function prepare_character_filter(data){
+    var characters = Object.keys(data);
+
+    var character_filter = document.getElementById("character_filter");
+
+    for (var i =0; i < characters.length; i++){
+        var option = document.createElement("option");
+        option.text = characters[i];
+        option.value = replace_all(characters[i], ' ', '_');
+
+        character_filter.add(option);
+    }
+}
+
+function replace_all(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }

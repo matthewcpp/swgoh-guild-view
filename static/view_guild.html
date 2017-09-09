@@ -25,10 +25,10 @@
 
     <script type="text/x-tmpl" id="character_data_template">
     {% for (var key in o) { %}
-        <tr class= '{%= o[key].force_side %}_side'>
+        <tr id='{%=replace_all(o[key].name, ' ', '_') %}' class= '{%= o[key].force_side %}_side character'>
         <td>
             <div><img src="{%=o[key].img_url %}" /></div>
-            <div>{%=o[key].name %}</div>
+            <div>{%= o[key].name %}</div>
         </td>
         {% for (var i=1; i<=7; i++) { %}
         <td class='{%= i %}_star'>
@@ -50,14 +50,20 @@
         <div id="guild_progress"></div>
     </div>
     <div id="filter_controls" style="display:none">
-            <div>
+        <div class="filter_type">
+            Character:
+            <select id="character_filter">
+                <option value="all">All</option>
+            </select>
+        </div>
+            <div class="filter_type">
                 <div>Force Side:</div>
                 <div>
-                    Light Side: <input type="checkbox" class="force_side_checkbox" checked data-force-side="light_side">
-                    Dark Side: <input type="checkbox" class="force_side_checkbox" checked data-force-side="dark_side">
+                    Light Side: <input id="light_side_filter" type="checkbox" class="force_side_checkbox" checked data-force-side="light_side">
+                    Dark Side: <input id="dark_side_filter" type="checkbox" class="force_side_checkbox" checked data-force-side="dark_side">
                 </div>
             </div>
-            <div>
+            <div class="filter_type">
                 <div>Star Filter:</div>
                 <div>
                 1: <input type="checkbox" class="star_filter_checkbox" checked data-col="1">
