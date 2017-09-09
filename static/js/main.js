@@ -30,16 +30,16 @@ function get_data(guild_name, guild_id){
 var prev_progress = 0;
 
 function update_progress(progress, guild_name, guild_id){
-    if (progress.processed >= prev_progress){
+    if (progress.processed > prev_progress){
         prev_progress = progress.processed;
 
         var guild_progress = document.getElementById("guild_progress");
         guild_progress.innerHTML = "Processed: " + progress.processed + "/"+progress.total;
-
-        setTimeout(function() {
-            get_data(guild_name, guild_id);
-        }, 1000);
     }
+
+    setTimeout(function() {
+        get_data(guild_name, guild_id);
+    }, 1000);
 }
 
 function getParameterByName(name, url) {
