@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, render_template
 import thread
 import threading
+import time
 
 import Queue
 
@@ -55,8 +56,6 @@ def view_guild():
 
 @app.route('/guild_data')
 def guild_data():
-    global is_processing
-
     guild_name = request.args.get('guild_name')
     guild_id = request.args.get('guild_id')
 
@@ -64,22 +63,46 @@ def guild_data():
         abort(404)
     else:
         guild_url = "http://swgoh.gg/g/{0}/{1}/".format(guild_id, guild_name)
-        guild_info = cache.get(guild_url)
-
-        with guild_lock:
-            if guild_info is None:
-                if queue.empty() and not is_processing:
-                    is_processing = True
-
-                    guild_info = create_guild_info("processing")
-                    thread.start_new_thread(get_guild_info, (guild_url,))
-                else:
-                    guild_info = create_guild_info("queued")
-                    queue.put(guild_url)
-
-                cache.set(guild_url, guild_info, timeout=CACHE_LIFE_HOURS)
+        guild_info = query_guild_info(guild_url)
 
         return jsonify(guild_info)
+
+@app.route('/guild_table')
+def guild_data_table():
+    guild_name = request.args.get('guild_name')
+    guild_id = request.args.get('guild_id')
+
+    if guild_name is None or guild_id is None:
+        abort(404)
+    else:
+        guild_url = "http://swgoh.gg/g/{0}/{1}/".format(guild_id, guild_name)
+        guild_info = query_guild_info(guild_url)
+
+        while guild_info["status"] != "complete":
+            guild_info = cache.get(guild_url)
+            time.sleep(1)
+
+        return render_template("html_table.html", data=guild_info["data"])
+
+def query_guild_info(guild_url):
+    global is_processing
+
+    guild_info = cache.get(guild_url)
+
+    with guild_lock:
+        if guild_info is None:
+            if queue.empty() and not is_processing:
+                is_processing = True
+
+                guild_info = create_guild_info("processing")
+                thread.start_new_thread(get_guild_info, (guild_url,))
+            else:
+                guild_info = create_guild_info("queued")
+                queue.put(guild_url)
+
+            cache.set(guild_url, guild_info, timeout=CACHE_LIFE_HOURS)
+
+    return guild_info
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
