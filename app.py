@@ -39,9 +39,7 @@ def get_guild_info(guild_url):
 
 def create_guild_info(status):
     guild_info = {"status": status}
-    guild_info["progress"] = dict()
-    guild_info["progress"]["processed"] = 0
-    guild_info["progress"]["total"] = 0
+    guild_info["progress"] = "Initializing"
 
     return guild_info
 
@@ -82,7 +80,9 @@ def guild_data_table():
             guild_info = cache.get(guild_url)
             time.sleep(1)
 
-        return render_template("html_table.html", data=guild_info["data"])
+        keys = guild_info["data"].keys()
+        keys.sort()
+        return render_template("html_table.html", data=guild_info["data"], keys=keys)
 
 def query_guild_info(guild_url):
     global is_processing

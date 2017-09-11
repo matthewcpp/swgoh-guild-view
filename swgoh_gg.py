@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import json
+from requests_toolbelt.threaded import pool
 
 SWGOH_GG = u"http://swgoh.gg"
 
@@ -20,9 +20,8 @@ def create_charinfo(name, img_url, light_side):
     return char_info
 
 
-def get_member_info(member_name, member_url, guild_info):
+def get_member_info(member_name, r, guild_info):
     print "Processing: " + member_name
-    r = requests.get(member_url)
     soup = BeautifulSoup(r.text, "html.parser")
 
     char_list = soup.find_all("div", class_="collection-char")
@@ -59,24 +58,38 @@ def get_guild_info(guild_url, progress):
 
         members = soup.find("tbody").find_all("a")
         p = progress.get(guild_url)
-        p["progress"]["total"] = len(members)
         progress.set(guild_url, p)
 
         processed_members = set()
+
+        member_urls = list()
+        member_names = list()
 
         for member_info in members:
             member_name = member_info.strong.string.encode('utf-8')
             member_url = u"{0}{1}collection".format(SWGOH_GG, member_info["href"])
 
             if member_name not in processed_members:
-                get_member_info(member_name, member_url, guild_info)
-
-                p["progress"]["processed"] += 1
-                progress.set(guild_url, p)
-
+                member_names.append(member_name)
+                member_urls.append(member_url)
                 processed_members.add(member_name)
             else:
                 print "Skipping duplicate member: {0}".format(member_name)
+
+        p["progress"] = "Fetching member data"
+        progress.set(guild_url, p)
+        print p["progress"]
+
+        request_pool = pool.Pool.from_urls(member_urls, None, num_processes=2)
+        request_pool.join_all()
+
+        p["progress"] = "Processing member data"
+        progress.set(guild_url, p)
+        print p["progress"]
+
+        for i, resp in enumerate(request_pool.responses()):
+            get_member_info(member_names[i], resp, guild_info)
+
     else:
         raise Exception("HTTP Error")
 

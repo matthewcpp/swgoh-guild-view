@@ -1,6 +1,6 @@
 var QueuedPollTime = 10 * 1000;
 var ProcessingPollTime = 2 * 1000;
-var prev_progress = 0;
+var prev_progress = null;
 
 function get_data(guild_name, guild_id){
     var xmlhttp = new XMLHttpRequest();
@@ -51,11 +51,11 @@ function update_queued(guild_name, guild_id){
 }
 
 function update_progress(progress, guild_name, guild_id){
-    if (progress.processed > prev_progress){
-        prev_progress = progress.processed;
+    if (progress != prev_progress){
+        prev_progress = progress;
 
         var guild_progress = document.getElementById("guild_progress");
-        guild_progress.innerHTML = "Processed: " + progress.processed + "/"+progress.total;
+        guild_progress.innerHTML = progress;
     }
 
     setTimeout(function() {

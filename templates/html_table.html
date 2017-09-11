@@ -12,10 +12,10 @@
         </tr>
     </thead>
     <tbody>
-    {% for c in data %}
+    {% for c in keys %}
         <tr>
             <td>{{ data[c]["name"].decode('utf-8') }}</td>
-        </tr>
+
 
         {% for s in range(1,8) %}
             <td>
@@ -24,6 +24,7 @@
                 {% endfor %}
             </td>
         {% endfor %}
+        </tr>
     {% endfor %}
     </tbody>
 </table>
