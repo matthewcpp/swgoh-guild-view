@@ -1,15 +1,66 @@
 import requests
+import json
+import copy
+
 from bs4 import BeautifulSoup
-from requests_toolbelt.threaded import pool
 
-SWGOH_GG = u"http://swgoh.gg"
+char_map = None
+char_info = None
 
 
-def create_charinfo(name, img_url, light_side):
+def _get_characters():
+    r = requests.get("https://swgoh.gg/api/characters/")
+    char_json = json.loads(r.text)
+
+    char_map = dict()
+    char_info = dict()
+
+    for char in char_json:
+        char_map[char["base_id"]] = char["name"]
+        char_info[char["name"]] = _create_charinfo(char["name"], char["image"])
+
+    _get_force_sides(char_info)
+
+    return char_map, char_info
+
+
+def _get_guild_units(guild_id, guild_data):
+    r = requests.get("https://swgoh.gg/api/guilds/{0}/units/".format(guild_id))
+    units_json = json.loads(r.text)
+
+    for unit in units_json:
+        char_name = char_map[unit]
+        char_data = guild_data[char_name]
+
+        owners = sorted(units_json[unit], reverse=True, key=lambda o: o["power"])
+
+        for owner in owners:
+            star_level = owner["character_stars"]
+
+            char_data["star_counts"][star_level].append({
+                "player": owner["player"],
+                "power": owner["power"],
+                "level": owner["character_level"]
+            })
+
+
+def _get_force_sides(char_info):
+    r = requests.get("https://swgoh.gg")
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    characters = soup.find_all("li", class_="character")
+
+    for character in characters:
+        name = character.find("h5").string
+        data = character.get("data-tags")
+        char_info[name]["force_side"] = "light" if data.find("light side") is not -1 else "dark"
+
+
+def _create_charinfo(name, img_url):
     char_info = dict()
     char_info["name"] = name
-    char_info["img_url"] = img_url;
-    char_info["force_side"] = "light" if light_side else "dark"
+    char_info["img_url"] = img_url
+    char_info["force_side"] = "unknown"
 
     star_counts = dict()
     for i in xrange(1, 8):
@@ -20,77 +71,14 @@ def create_charinfo(name, img_url, light_side):
     return char_info
 
 
-def get_member_info(member_name, r, guild_info):
-    print "Processing: " + member_name
-    soup = BeautifulSoup(r.text, "html.parser")
+def get_guild_data(guild_id):
+    global char_map
+    global char_info
 
-    char_list = soup.find_all("div", class_="collection-char")
+    if char_info is None:
+        char_map, char_info = _get_characters()
 
-    for char in char_list:
-        name = char.find("div", class_="collection-char-name").string.encode('utf-8')
-        img_url = char.find("img")["src"]
+    char_data = copy.deepcopy(char_info)
+    _get_guild_units(guild_id, char_data)
 
-        classes = char.get('class', [])
-        light_side = True if "collection-char-light-side" in classes else False
-
-        has_character = len(char.find_all("div", class_="star")) > 0
-
-        if has_character:
-            star_count = 7 - len(char.find_all("div", class_="star-inactive"))
-
-            if name not in guild_info:
-                guild_info[name] = create_charinfo(name, img_url, light_side)
-
-            char_info = guild_info[name]
-
-            gear_lvl = char.find("div", class_="char-portrait-full-gear-level").string
-            char_info["star_counts"][star_count].append("{0} ({1})".format(member_name, gear_lvl))
-
-
-
-def get_guild_info(guild_url, progress):
-    guild_info = dict()
-
-    r = requests.get(guild_url)
-
-    if r.status_code == 200:
-        soup = BeautifulSoup(r.text, "html.parser")
-
-        members = soup.find("tbody").find_all("a")
-        p = progress.get(guild_url)
-        progress.set(guild_url, p)
-
-        processed_members = set()
-
-        member_urls = list()
-        member_names = list()
-
-        for member_info in members:
-            member_name = member_info.strong.string.encode('utf-8')
-            member_url = u"{0}{1}collection".format(SWGOH_GG, member_info["href"])
-
-            if member_name not in processed_members:
-                member_names.append(member_name)
-                member_urls.append(member_url)
-                processed_members.add(member_name)
-            else:
-                print "Skipping duplicate member: {0}".format(member_name)
-
-        p["progress"] = "Fetching member data"
-        progress.set(guild_url, p)
-        print p["progress"]
-
-        request_pool = pool.Pool.from_urls(member_urls, None, num_processes=2)
-        request_pool.join_all()
-
-        p["progress"] = "Processing member data"
-        progress.set(guild_url, p)
-        print p["progress"]
-
-        for i, resp in enumerate(request_pool.responses()):
-            get_member_info(member_names[i], resp, guild_info)
-
-    else:
-        raise Exception("HTTP Error")
-
-    return guild_info
+    return char_data

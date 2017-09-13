@@ -1,28 +1,15 @@
-var QueuedPollTime = 10 * 1000;
-var ProcessingPollTime = 2 * 1000;
 var prev_progress = null;
 
-function get_data(guild_name, guild_id){
+function get_data(guild_id){
     var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.open("GET", "/guild_data?guild_name="+guild_name+"&guild_id="+guild_id);
+    xmlhttp.open("GET", "/guild_data?guild_id="+guild_id);
 
 
     xmlhttp.onload = function () {
         var result = JSON.parse(xmlhttp.responseText);
+        load_complete(result);
 
-        switch (result.status){
-            case "complete":
-                load_complete(result.data);
-                break;
-
-            case "processing":
-                update_progress(result.progress, guild_name, guild_id);
-                break;
-
-            case "queued":
-                update_queued(guild_name, guild_id);
-        }
     };
 
     xmlhttp.send();
@@ -39,28 +26,6 @@ function load_complete(data){
 
         prepare_character_filter(data);
         init_events();
-}
-
-function update_queued(guild_name, guild_id){
-    var guild_progress = document.getElementById("guild_progress");
-        guild_progress.innerHTML = "The system is currently processing data for other guilds.  We will get to you as soon as possible.";
-
-    setTimeout(function() {
-        get_data(guild_name, guild_id);
-    }, QueuedPollTime);
-}
-
-function update_progress(progress, guild_name, guild_id){
-    if (progress != prev_progress){
-        prev_progress = progress;
-
-        var guild_progress = document.getElementById("guild_progress");
-        guild_progress.innerHTML = progress;
-    }
-
-    setTimeout(function() {
-        get_data(guild_name, guild_id);
-    }, ProcessingPollTime);
 }
 
 function set_col_visibility(col_num, visibility){
@@ -161,6 +126,9 @@ function replace_all(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+function format_entry(entry){
+    return entry["player"] + " ("+ entry["power"] + ')';
+}
 
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;

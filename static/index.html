@@ -11,10 +11,9 @@
         window.onload = function () {
             var view_guild_button = document.getElementById("view_guild_button");
             var guild_id_box = document.getElementById("guild_id_box");
-            var guild_name_box = document.getElementById("guild_name_box");
 
             view_guild_button.onclick = function(){
-                window.location = "view_guild/?guild_id="+guild_id_box.value+"&guild_name="+guild_name_box.value;
+                window.location = "view_guild/?guild_id="+guild_id_box.value;
             }
         }
     </script>
@@ -27,7 +26,7 @@
             Your Guild at a Glance:
         </div>
         <div>
-            http://swgoh.gg/g/<input id="guild_id_box" type="text" value="5481" class="url_box_text">/<input id="guild_name_box" type="text" value="scruffy-nerfed-herders" class="url_box_text">/
+            swgoh.gg guild id: <input id="guild_id_box" type="text" value="5481" class="url_box_text" />
         </div>
         <div class="center_text">
             <button id="view_guild_button" class="url_box_text">View</button>
