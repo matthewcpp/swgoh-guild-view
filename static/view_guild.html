@@ -12,13 +12,11 @@
 
     <script>
         window.onload = function () {
-            var guild_name = getParameterByName("guild_name");
             var guild_id = getParameterByName("guild_id");
 
 
-            if (guild_name){
-                document.getElementById("guild_name_callout").innerHTML = guild_name;
-                get_data(guild_name, guild_id);
+            if (guild_id){
+                get_data(guild_id);
             }
         }
     </script>
@@ -27,13 +25,13 @@
     {% for (var key in o) { %}
         <tr id='{%=replace_all(o[key].name, ' ', '_') %}' class= '{%= o[key].force_side %}_side character'>
         <td>
-            <div><img src="{%=o[key].img_url %}" /></div>
+            <div><img src="{%= o[key].img_url %}" /></div>
             <div>{%= o[key].name %}</div>
         </td>
-        {% for (var i=1; i<=7; i++) { %}
+        {% for (var i = 1; i <= 7; i++) { %}
         <td class='{%= i %}_star'>
-            {% for (var j=0; j<=o[key].star_counts[i].length; j++) { %}
-            <div>{%=o[key].star_counts[i][j] %}<div>
+            {% for (var j = 0; j < o[key].star_counts[i].length; j++) { %}
+            {%=format_entry(o[key].star_counts[i][j]) %}<br />
             {% } %}
         </td>
         {% } %}
@@ -44,9 +42,8 @@
 </head>
 <body>
     <div id="loading_image" class="centered">
-        <div id="guild_name_callout"></div>
         <div><img src="/static/img/loading.gif" /></div>
-        <div class="center_text">Hold on, this may take a few minutes...</div>
+        <div class="center_text">Hold on, this may take a few seconds...</div>
         <div id="guild_progress"></div>
     </div>
     <div id="filter_controls" style="display:none">
