@@ -34,7 +34,11 @@ def _get_guild_units(guild_id, guild_data):
 
         owners = sorted(units_json[unit], reverse=True, key=lambda o: o["power"])
 
-        for owner in owners:
+        for i in xrange(len(owners)):
+            owner = owners[i]
+            if i > 0 and owner["player"] == owners[i-1]["player"]:
+                continue
+
             star_level = owner["character_stars"]
 
             char_data["star_counts"][star_level].append({
