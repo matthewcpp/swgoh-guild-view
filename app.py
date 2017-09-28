@@ -21,7 +21,8 @@ def guild_data():
     if guild_id is None:
         abort(404)
     else:
-        guild_info = swgoh_gg.get_guild_data(guild_id)
+        guild_info, ship_info = swgoh_gg.get_guild_data(guild_id)
+        guild_info.update(ship_info)
 
         return jsonify(guild_info)
 
@@ -34,7 +35,8 @@ def guild_table():
     if guild_id is None:
         abort(404)
     else:
-        guild_info = swgoh_gg.get_guild_data(guild_id)
+        guild_info, ship_info = swgoh_gg.get_guild_data(guild_id)
+        guild_info.update(ship_info)
 
         return render_template("html_table.html", data=guild_info)
 

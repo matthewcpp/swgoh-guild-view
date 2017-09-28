@@ -1,5 +1,3 @@
-var prev_progress = null;
-
 function get_data(guild_id){
     var xmlhttp = new XMLHttpRequest();
 
