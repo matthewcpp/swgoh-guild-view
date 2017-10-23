@@ -36,7 +36,6 @@ def _get_guild_units(guild_id, guild_data, ship_data):
         else:
             unit_name = ship_map[unit]
             unit_data = ship_data[unit_name]
-            print "ship: {0}".format(unit_name)
 
         owners = sorted(units_json[unit], reverse=True, key=lambda o: o["power"])
 

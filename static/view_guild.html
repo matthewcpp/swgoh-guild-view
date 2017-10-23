@@ -25,7 +25,7 @@
     {% for (var key in o) { %}
         <tr id='{%=replace_all(o[key].name, ' ', '_') %}' class= '{%= o[key].force_side %}_side character'>
         <td>
-            <div><img src="{%= o[key].img_url %}" /></div>
+            <div><img class="portrait" src="{%= o[key].img_url %}" /></div>
             <div>{%= o[key].name %}</div>
         </td>
         {% for (var i = 1; i <= 7; i++) { %}
@@ -48,9 +48,9 @@
     </div>
     <div id="filter_controls" style="display:none">
         <div class="filter_type">
-            Unit:
-            <select id="character_filter">
-                <option value="all">All</option>
+            <div>Unit:</div>
+            <select id="character_list">
+                <option value="all" selected>All</option>
             </select>
         </div>
         <!--
@@ -64,15 +64,15 @@
             -->
             <div class="filter_type">
                 <div>Star Filter:</div>
-                <div>
-                1: <input type="checkbox" class="star_filter_checkbox" checked data-col="1">
-                2: <input type="checkbox" class="star_filter_checkbox" checked data-col="2">
-                3: <input type="checkbox" class="star_filter_checkbox" checked data-col="3">
-                4: <input type="checkbox" class="star_filter_checkbox" checked data-col="4">
-                5: <input type="checkbox" class="star_filter_checkbox" checked data-col="5">
-                6: <input type="checkbox" class="star_filter_checkbox" checked data-col="6">
-                7: <input type="checkbox" class="star_filter_checkbox" checked data-col="7">
-                </div>
+                <select id="star-filter">
+                    <option value="1" selected>1*+</option>
+                    <option value="2">2*+</option>
+                    <option value="3">3*+</option>
+                    <option value="4">4*+</option>
+                    <option value="5">5*+</option>
+                    <option value="6">6*+</option>
+                    <option value="7">7*</option>
+                </select>
             </div>
         </div>
     <div id="guild_data" style="display:none">

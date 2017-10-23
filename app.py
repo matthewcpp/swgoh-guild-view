@@ -8,12 +8,10 @@ app = Flask(__name__)
 def index():
     return app.send_static_file('index.html')
 
-@app.route('/view_guild')
 @app.route('/view_guild/')
 def view_guild():
     return app.send_static_file('view_guild.html')
 
-@app.route('/guild_data')
 @app.route('/guild_data/')
 def guild_data():
     guild_id = request.args.get('guild_id')
@@ -27,7 +25,6 @@ def guild_data():
         return jsonify(guild_info)
 
 
-@app.route('/guild_table')
 @app.route('/guild_table/')
 def guild_table():
     guild_id = request.args.get('guild_id')

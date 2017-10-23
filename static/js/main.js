@@ -26,12 +26,21 @@ function load_complete(data){
         init_events();
 }
 
-function set_col_visibility(col_num, visibility){
-    var items = document.getElementsByClassName(col_num + "_star");
-    var display_text = visibility ? "table-cell" : "none";
+function set_col_visibility(col_num){
+    col_num = parseInt(col_num);
 
-    for (var i  = 0; i < items.length; i++){
-        items[i].style.display = display_text;
+    for(var rarity =1; rarity < col_num; rarity++){
+        var items = document.getElementsByClassName(rarity + "_star");
+        for (var i  = 0; i < items.length; i++){
+            items[i].style.display = "none";
+        }
+    }
+
+    for(var rarity = col_num; rarity <= 7; rarity++) {
+        var items = document.getElementsByClassName(rarity + "_star");
+        for (var i  = 0; i < items.length; i++) {
+            items[i].style.display = "table-cell";
+        }
     }
 }
 
@@ -45,13 +54,11 @@ function set_force_visibility(force_side, visibility){
 }
 
 function init_events(){
-    var items = document.getElementsByClassName("star_filter_checkbox");
+    var star_filter = document.getElementById("star-filter");
+    star_filter.addEventListener("change", function(){
+        set_col_visibility(star_filter.value);
+    });
 
-    for (var i  = 0; i < items.length; i++){
-        items[i].addEventListener("click", function(){
-            set_col_visibility(this.getAttribute("data-col"), this.checked);
-        })
-    }
 
     items = document.getElementsByClassName("force_side_checkbox");
 
@@ -61,9 +68,9 @@ function init_events(){
         })
     }
 
-    var character_filter = document.getElementById("character_filter");
-    character_filter.addEventListener("change",  function(){
-        filter_character(character_filter.value);
+    var character_list = document.getElementById("character_list");
+    character_list.addEventListener("change",  function(){
+        filter_character(character_list.value);
     });
 
 }
@@ -109,14 +116,14 @@ function filter_character(character_name){
 function prepare_character_filter(data){
     var characters = Object.keys(data);
 
-    var character_filter = document.getElementById("character_filter");
+    var character_list = document.getElementById("character_list");
 
     for (var i =0; i < characters.length; i++){
         var option = document.createElement("option");
         option.text = characters[i];
-        option.value = replace_all(characters[i], ' ', '_');
+        option.value = replace_all(characters[i], ' ', '_')
 
-        character_filter.add(option);
+        character_list.add(option);
     }
 }
 
