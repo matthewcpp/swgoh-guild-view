@@ -46,6 +46,8 @@ def _get_guild_units(guild_id, guild_data, ship_data):
 
             star_level = owner["rarity"]
             unit_data["toon_count"][star_level] += 1
+            unit_data["total_count"] += 1
+            unit_data["total_gp"] += owner["power"]
             unit_data["power_count"][star_level] += owner["power"]
             unit_data["star_counts"][star_level].append({
                 "player": owner["player"],
@@ -71,6 +73,8 @@ def _create_charinfo(name, img_url):
     char_info["name"] = name
     char_info["img_url"] = img_url
     char_info["force_side"] = "unknown"
+    char_info["total_count"] = 0
+    char_info["total_gp"] = 0
 
     star_counts = dict()
     toon_count = dict()
