@@ -38,14 +38,15 @@ def _get_guild_units(guild_id, guild_data, ship_data):
             unit_data = ship_data[unit_name]
 
         owners = sorted(units_json[unit], reverse=True, key=lambda o: o["power"])
-
+        
         for i in xrange(len(owners)):
             owner = owners[i]
             if i > 0 and owner["player"] == owners[i-1]["player"]:
                 continue
 
             star_level = owner["rarity"]
-
+            unit_data["toon_count"][star_level] += 1
+            unit_data["power_count"][star_level] += owner["power"]
             unit_data["star_counts"][star_level].append({
                 "player": owner["player"],
                 "power": owner["power"],
@@ -72,10 +73,17 @@ def _create_charinfo(name, img_url):
     char_info["force_side"] = "unknown"
 
     star_counts = dict()
+    toon_count = dict()
+    power_count = dict()
+    
     for i in xrange(1, 8):
         star_counts[i] = list()
+        toon_count[i] = 0
+        power_count[i] = 0
 
     char_info["star_counts"] = star_counts
+    char_info["toon_count"] = toon_count
+    char_info["power_count"] = power_count
 
     return char_info
 
