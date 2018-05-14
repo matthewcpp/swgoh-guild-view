@@ -27,14 +27,14 @@
         <td>
             <div><img class="portrait" src="{%= o[key].img_url %}" /></div>
             <div>{%= o[key].name %}</div>
-            <div><style class="totals">Total: {%= o[key].total_count %} ({%= o[key].total_gp %})</style>
+            Total: {%= o[key].total_count %} ({%= o[key].total_gp %})
         </td>
         {% for (var i = 1; i <= 7; i++) { %}
         <td class='{%= i %}_star'>
             {% for (var j = 0; j < o[key].star_counts[i].length; j++) { %}
             {%=format_entry(o[key].star_counts[i][j]) %}<br />
             {% } %}
-            <style class="totals">Total: {%= o[key].toon_count[i] %} ( {%= o[key].power_count[i] %} )</style>  
+            Total: {%= o[key].toon_count[i] %} ( {%= o[key].power_count[i] %} )  
         </td>
         {% } %}
         </tr>
