@@ -29,13 +29,13 @@ def _get_guild_units(guild_id, guild_data, ship_data):
     r = requests.get("https://swgoh.gg/api/guild/{0}/".format(guild_id))
     units_json = json.loads(r.text)
     
-    for player in units_json[players]:
-        for unit in player[units]:
-            if unit in char_map:
-                unit_name = char_map[unit]
+    for player in units_json["players"]:
+        for unit in player["units"]:
+            if unit["base_id"] in char_map:
+                unit_name = char_map[unit["base_id"]]
                 unit_data = guild_data[unit_name]
             else:
-                unit_name = ship_map[unit]
+                unit_name = ship_map[unit["base_id"]]
                 unit_data = ship_data[unit_name]
 
             owner = player["name"]
