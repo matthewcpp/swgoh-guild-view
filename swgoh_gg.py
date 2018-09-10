@@ -15,30 +15,30 @@ def _get_characters(url):
     r = requests.get(url)
     char_json = json.loads(r.text)
 
-    char_map = dict()
-    char_info = dict()
+    cmap = dict()
+    cinfo = dict()
 
     for char in char_json:
-        char_map[char["base_id"]] = char["name"]
-        char_info[char["name"]] = _create_charinfo(char["name"], char["image"])
+        cmap[char["base_id"]] = char["name"]
+        cinfo[char["name"]] = _create_charinfo(char["name"], char["image"])
 
-    return char_map, char_info
+    return cmap, cinfo
 
 
-def _get_guild_units(guild_id, guild_data, ship_data):
+def _get_guild_units(guild_id, guild_data, gship_data):
     r = requests.get("https://swgoh.gg/api/guild/{0}/".format(guild_id))
     units_json = json.loads(r.text)
 
     for player in units_json["players"]:
         for unit in player["units"]:
-            if unit["base_id"] in char_map:
-                unit_name = char_map[unit["base_id"]]
+            if unit["data"]["base_id"] in char_map:
+                unit_name = char_map[unit["data"]["base_id"]]
                 unit_data = guild_data[unit_name]
             else:
-                unit_name = ship_map[unit["base_id"]]
+                unit_name = ship_map[unit["data"]["base_id"]]
                 unit_data = ship_data[unit_name]
 
-            owner = player["name"]
+            owner = player["data"]["name"]
             star_level = unit["data"]["rarity"]
             unit_data["toon_count"][star_level] += 1
             unit_data["total_count"] += 1
@@ -64,12 +64,12 @@ def _get_force_sides(char_info):
 
 
 def _create_charinfo(name, img_url):
-    char_info = dict()
-    char_info["name"] = name
-    char_info["img_url"] = img_url
-    char_info["force_side"] = "unknown"
-    char_info["total_count"] = 0
-    char_info["total_gp"] = 0
+    c_info = dict()
+    c_info["name"] = name
+    c_info["img_url"] = img_url
+    c_info["force_side"] = "unknown"
+    c_info["total_count"] = 0
+    c_info["total_gp"] = 0
 
     star_counts = dict()
     toon_count = dict()
@@ -80,11 +80,11 @@ def _create_charinfo(name, img_url):
         toon_count[i] = 0
         power_count[i] = 0
 
-    char_info["star_counts"] = star_counts
-    char_info["toon_count"] = toon_count
-    char_info["power_count"] = power_count
+    c_info["star_counts"] = star_counts
+    c_info["toon_count"] = toon_count
+    c_info["power_count"] = power_count
 
-    return char_info
+    return c_info
 
 
 def get_guild_data(guild_id):
