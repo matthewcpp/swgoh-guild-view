@@ -36,7 +36,7 @@ def _get_guild_units(guild_id, guild_data, gship_data):
                 unit_data = guild_data[unit_name]
             else:
                 unit_name = ship_map[unit["data"]["base_id"]]
-                unit_data = ship_data[unit_name]
+                unit_data = gship_data[unit_name]
 
             owner = player["data"]["name"]
             star_level = unit["data"]["rarity"]
