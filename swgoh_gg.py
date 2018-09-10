@@ -26,34 +26,29 @@ def _get_characters(url):
 
 
 def _get_guild_units(guild_id, guild_data, ship_data):
-    r = requests.get("https://swgoh.gg/api/guilds/{0}/units/".format(guild_id))
+    r = requests.get("https://swgoh.gg/api/guild/{0}/".format(guild_id))
     units_json = json.loads(r.text)
+    
+    for player in units_json[players]:
+        for unit in player[units]:
+            if unit in char_map:
+                unit_name = char_map[unit]
+                unit_data = guild_data[unit_name]
+            else:
+                unit_name = ship_map[unit]
+                unit_data = ship_data[unit_name]
 
-    for unit in units_json:
-        if unit in char_map:
-            unit_name = char_map[unit]
-            unit_data = guild_data[unit_name]
-        else:
-            unit_name = ship_map[unit]
-            unit_data = ship_data[unit_name]
-
-        owners = sorted(units_json[unit], reverse=True, key=lambda o: o["power"])
-        
-        for i in xrange(len(owners)):
-            owner = owners[i]
-            if i > 0 and owner["player"] == owners[i-1]["player"]:
-                continue
-
-            star_level = owner["rarity"]
-            unit_data["toon_count"][star_level] += 1
-            unit_data["total_count"] += 1
-            unit_data["total_gp"] += owner["power"]
-            unit_data["power_count"][star_level] += owner["power"]
-            unit_data["star_counts"][star_level].append({
-                "player": owner["player"],
-                "power": owner["power"],
-                "level": owner["level"]
-            })
+            owner = player["name"]
+            star_level = unit["data"]["rarity"]
+                unit_data["toon_count"][star_level] += 1
+                unit_data["total_count"] += 1
+                unit_data["total_gp"] += unit["data"]["power"]
+                unit_data["power_count"][star_level] += unit["data"]["power"]
+                unit_data["star_counts"][star_level].append({
+                    "player": owner,
+                    "power": unit["data"]["power"],
+                    "level": unit["data"]["level"]
+                })
 
 
 def _get_force_sides(char_info):
