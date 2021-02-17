@@ -15,41 +15,39 @@ def _get_characters(url):
     r = requests.get(url)
     char_json = json.loads(r.text)
 
-    char_map = dict()
-    char_info = dict()
+    cmap = dict()
+    cinfo = dict()
 
     for char in char_json:
-        char_map[char["base_id"]] = char["name"]
-        char_info[char["name"]] = _create_charinfo(char["name"], char["image"])
+        cmap[char["base_id"]] = char["name"]
+        cinfo[char["name"]] = _create_charinfo(char["name"], char["image"])
 
-    return char_map, char_info
+    return cmap, cinfo
 
 
-def _get_guild_units(guild_id, guild_data, ship_data):
-    r = requests.get("https://swgoh.gg/api/guilds/{0}/units/".format(guild_id))
+def _get_guild_units(guild_id, guild_data, gship_data):
+    r = requests.get("https://swgoh.gg/api/guild/{0}/".format(guild_id))
     units_json = json.loads(r.text)
 
-    for unit in units_json:
-        if unit in char_map:
-            unit_name = char_map[unit]
-            unit_data = guild_data[unit_name]
-        else:
-            unit_name = ship_map[unit]
-            unit_data = ship_data[unit_name]
+    for player in units_json["players"]:
+        for unit in player["units"]:
+            if unit["data"]["base_id"] in char_map:
+                unit_name = char_map[unit["data"]["base_id"]]
+                unit_data = guild_data[unit_name]
+            else:
+                unit_name = ship_map[unit["data"]["base_id"]]
+                unit_data = gship_data[unit_name]
 
-        owners = sorted(units_json[unit], reverse=True, key=lambda o: o["power"])
-
-        for i in xrange(len(owners)):
-            owner = owners[i]
-            if i > 0 and owner["player"] == owners[i-1]["player"]:
-                continue
-
-            star_level = owner["rarity"]
-
+            owner = player["data"]["name"]
+            star_level = unit["data"]["rarity"]
+            unit_data["toon_count"][star_level] += 1
+            unit_data["total_count"] += 1
+            unit_data["total_gp"] += unit["data"]["power"]
+            unit_data["power_count"][star_level] += unit["data"]["power"]
             unit_data["star_counts"][star_level].append({
-                "player": owner["player"],
-                "power": owner["power"],
-                "level": owner["level"]
+                "player": owner,
+                "power": unit["data"]["power"],
+                "level": unit["data"]["level"]
             })
 
 
@@ -66,18 +64,27 @@ def _get_force_sides(char_info):
 
 
 def _create_charinfo(name, img_url):
-    char_info = dict()
-    char_info["name"] = name
-    char_info["img_url"] = img_url
-    char_info["force_side"] = "unknown"
+    c_info = dict()
+    c_info["name"] = name
+    c_info["img_url"] = img_url
+    c_info["force_side"] = "unknown"
+    c_info["total_count"] = 0
+    c_info["total_gp"] = 0
 
     star_counts = dict()
+    toon_count = dict()
+    power_count = dict()
+
     for i in xrange(1, 8):
         star_counts[i] = list()
+        toon_count[i] = 0
+        power_count[i] = 0
 
-    char_info["star_counts"] = star_counts
+    c_info["star_counts"] = star_counts
+    c_info["toon_count"] = toon_count
+    c_info["power_count"] = power_count
 
-    return char_info
+    return c_info
 
 
 def get_guild_data(guild_id):
